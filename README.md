@@ -50,4 +50,4 @@ Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하
   -> YOLO 모델이 꽤 빠르다는 뜻! 일반적으로 GPU (특히 Tesla T4 같은 모델)에서 60 FPS 이상이면 실시간 성능급임.<br>
   <img width="978" height="703" alt="image" src="https://github.com/user-attachments/assets/4373b72f-eee4-4e39-89a4-657d1266a6e9" />
 
-7. 밑부분은 yaml 파일을 코랩의 코드셀에서 수정하는 부분이지만, 내가 직접 yaml 파일을 더블클릭하여 수정했으므로 의미는 없다.
+6. 밑에 있는 코드들은 yaml 파일을 코랩의 코드셀에서 건드려 오류를 해결하는 부분이지만, 내가 직접 yaml 파일을 더블클릭하여 수정했으므로 의미는 없다.
