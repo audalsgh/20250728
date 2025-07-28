@@ -35,7 +35,7 @@ Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하
 3. dataset.yaml 야믈 파일내부에서 클래스가 몇개인지 알수있다.
   <img width="197" height="202" alt="image" src="https://github.com/user-attachments/assets/b20b2952-65ee-497e-ae62-c4c8fd73ccd3" />
 
-4. 경로상의 문제로, dataset.yaml 내부를 /content/dataset/dataset/train 등으로 수정해줘야한다.
+4. 경로상의 문제로, dataset.yaml 내부를 /content/dataset/dataset/train 등으로 수정해줘야한다.<br>
   train : 학습 이미지와 라벨이 들어 있는 경로<br>
   val:	검증 이미지와 라벨이 들어 있는 경로<br>
   names:	클래스 번호와 이름의 매핑이 보이고, 교수님이 주신 이 데이터셋은 두개의 클래스만 있다.
