@@ -33,7 +33,8 @@ Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하
 2. 코랩과 구글 드라이브 연동, mount해오기
   <img width="1148" height="508" alt="image" src="https://github.com/user-attachments/assets/d1ff1044-1e88-4a1e-b842-5d9371c816fd" />
 
-3. dataset.yaml 야믈 파일내부에서 클래스가 몇개인지 알수있다.
+3. dataset.yaml 야믈 파일내부에서 클래스가 몇개인지 알수있다.<br>
+  데이터셋을 다운받은거라 원인은 모르겠으나, **경로를 dataset/vaild이 아니라 다른곳으로 잘못 참조하고 있음.**<br>
   <img width="197" height="202" alt="image" src="https://github.com/user-attachments/assets/b20b2952-65ee-497e-ae62-c4c8fd73ccd3" />
 
 4. 경로상의 문제로, dataset.yaml 내부를 /content/dataset/dataset/train 등으로 수정해줘야한다.<br>
