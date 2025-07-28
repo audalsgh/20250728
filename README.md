@@ -42,7 +42,7 @@ Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하
   names:	클래스 번호와 이름의 매핑이 보이고, 교수님이 주신 이 데이터셋은 두개의 클래스만 있다.
   <img width="1682" height="667" alt="image" src="https://github.com/user-attachments/assets/94288f88-83bd-48ac-b4ea-4e46f391517c" />
 
-6. 수정후 재실행해보면, 오류없이 성능 평가까지 잘 마쳐진다.
+5. 수정후 재실행해보면, 3990장의 프레임이 분석되고, 오류없이 성능 평가까지 잘 마쳐진다.
   <img width="1488" height="664" alt="image" src="https://github.com/user-attachments/assets/36f3edf1-c99a-4c0d-909d-4de396d471e7" />
 
-
+6. 밑부분은 yaml 파일을 코랩의 코드셀에서 수정하는 부분이지만, 내가 직접 yaml 파일을 더블클릭하여 수정했으므로 의미는 없다.
