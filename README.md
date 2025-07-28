@@ -1,6 +1,6 @@
 # 26일차
 
-## 1. 로보플로우에서 라벨링하고 나온 모델 결과에 대한 평가 정리
+## 1. 로보플로우에서 라벨링하고 나온 모델 파일들에 대한 정리
 <img width="340" height="474" alt="image" src="https://github.com/user-attachments/assets/4d50fb61-2439-4ae9-b10c-64ae39e88c20" />
 
 ```python
