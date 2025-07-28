@@ -24,7 +24,8 @@ runs/
 
 ## 2. 다운받은 dataset을 구글 드라이브에 넣고, 코랩에서 YOLOv11 테스트해보기
 Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하기.<br>
-런파드 도커 문제로 인해 수업은 더이상 하지않고, 코랩에서 dataset을 넣어 YOLOv11로 전이학습을 테스트해볼것.<br>
+런파드 도커 문제로 인해 수업은 더이상 하지않고, 코랩에서 dataset을 직접 넣어 YOLOv11로 전이학습을 테스트해볼것.<br>
+**직접 넣은 dataset의 모델(best.pt)은 (yolo11n.pt)와는 다른 커스텀된 YOLO이라고 봐야한다.**<br>  
 [코랩에서 실행한 코드들](0728_Transfer_Learning_Colab.ipynb)
 
 1. 구글 드라이브에 dataset 폴더를 통쨰로 업로드하기.
@@ -63,8 +64,9 @@ TensorRT 위주로 정리.<br>
 - 높은 처리량과 실시간성이 중요할때 쓰인다.
 
 ### YOLO를 사용하는 기존코드를 챗GPT를 통해 TensorRT 모델 .engine파일로 변환해서 테스트해보기.
-**Colab은 tensorrt 설치 시 GPU 드라이버와 충돌하거나, 설치 시간이 오래 걸려 멈추는 경우 존재**<br>
-여러번 실행해서 TensorRT 변환을 위한 tensorrt 패키지 설치가 완료될때까지 시도.<br>
+**- Colab은 tensorrt 설치 시 GPU 드라이버와 충돌하거나, 설치 시간이 오래 걸려 멈추는 경우 존재**<br>
+- 여러번 실행해서 TensorRT 변환을 위한 tensorrt 패키지 설치가 완료될때까지 시도해야함.<br>
+- 나의 코드는 YOLOv11까지 테스트한 교수님것과 달리, 커스텀된 YOLO모델 (best.pt)에 대한 테스트만 하고있다.<br>
 <img width="688" height="476" alt="image" src="https://github.com/user-attachments/assets/4ec847e4-40c8-4458-b685-c028e5380cac" /><br>
 
 -> 모델 정확도 평가는 PyTorch 기반 YOLO만 돌렸을때 해야하고,<br>
