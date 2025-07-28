@@ -61,3 +61,10 @@ TensorRT 위주로 정리.<br>
 - 배포환경은 서버, 엣지
 - gpu 리소스 절약됨
 - 높은 처리량과 실시간성이 중요할때 쓰인다.
+
+**Colab은 tensorrt 설치 시 GPU 드라이버와 충돌하거나, 설치 시간이 오래 걸려 멈추는 경우 존재**<br>
+여러번 실행해서 TensorRT 변환을 위한 tensorrt 패키지 설치가 완료될때까지 시도.<br>
+<img width="688" height="476" alt="image" src="https://github.com/user-attachments/assets/4ec847e4-40c8-4458-b685-c028e5380cac" /><br>
+
+-> 모델 정확도 평가는 PyTorch 기반 YOLO만 돌렸을때 해야하고,<br>
+-> 속도나 실시간성이 중요한 배포 환경에서는, 두배정도 fps가 상승한 TensorRT로 변환하여 사용하는 것이 최적.
