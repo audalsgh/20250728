@@ -36,10 +36,10 @@ Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하
   <img width="197" height="202" alt="image" src="https://github.com/user-attachments/assets/b20b2952-65ee-497e-ae62-c4c8fd73ccd3" />
 
 4. 경로상의 문제로, dataset.yaml 내부를 /content/dataset/dataset/train 등으로 수정해줘야한다.
-  <img width="1682" height="667" alt="image" src="https://github.com/user-attachments/assets/94288f88-83bd-48ac-b4ea-4e46f391517c" />
   train : 학습 이미지와 라벨이 들어 있는 경로<br>
   val:	검증 이미지와 라벨이 들어 있는 경로<br>
   names:	클래스 번호와 이름의 매핑이 보이고, 교수님이 주신 이 데이터셋은 두개의 클래스만 있다.
+  <img width="1682" height="667" alt="image" src="https://github.com/user-attachments/assets/94288f88-83bd-48ac-b4ea-4e46f391517c" />
 
 6. 수정후 재실행해보면, 오류없이 성능 평가까지 잘 마쳐진다.
   <img width="1488" height="664" alt="image" src="https://github.com/user-attachments/assets/36f3edf1-c99a-4c0d-909d-4de396d471e7" />
