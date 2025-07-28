@@ -68,3 +68,7 @@ TensorRT 위주로 정리.<br>
 
 -> 모델 정확도 평가는 PyTorch 기반 YOLO만 돌렸을때 해야하고,<br>
 -> 속도나 실시간성이 중요한 배포 환경에서는, 두배정도 fps가 상승한 TensorRT로 변환하여 사용하는 것이 최적.
+
+## 4. NVIDIA 딥 러닝 인스티튜드 -> Self paced courses -> free courses 하나 더 듣기
+<img width="1455" height="989" alt="image" src="https://github.com/user-attachments/assets/d26c8fe6-5980-451f-b2dc-7c6ebb015530" />
+Disaster Risk Monitoring Using Satellite Imagery 강의 듣을때, 무료 gpu를 2시간동안 대여해주므로 준비하고 실습강의 진입할것.
