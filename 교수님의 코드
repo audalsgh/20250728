@@ -1,0 +1,270 @@
+!pip install ultralytics yt-dlp
+
+from ultralytics import YOLO
+import glob
+import cv2
+import numpy as np
+from IPython.display import Video
+import shutil
+import time
+
+# yaml 수정 (핵심 문제 해결)
+yaml_fix = '''path: /content/dataset
+train: train/images
+val: valid/images
+names:
+  0: lane
+  1: traffic_sign
+nc: 2'''
+
+with open('/content/dataset/dataset_fixed.yaml', 'w') as f:
+    f.write(yaml_fix)
+
+print("🚀 TensorRT 최적화 YOLO 추론 시작!")
+print("="*60)
+
+# 1️⃣ 기본 모델들 로드
+print("🤖 기본 모델 로드 중...")
+base_model = YOLO('yolo11n.pt')
+custom_model = YOLO('/content/dataset/best.pt')
+
+print(f"기본 모델 클래스 수: {len(base_model.names)}")
+print(f"커스텀 모델 클래스 수: {len(custom_model.names)}")
+
+# 2️⃣ TensorRT로 변환
+print("\n⚡ TensorRT 변환 중...")
+print("기본 모델 → TensorRT 변환...")
+base_model.export(format='engine', half=True, device=0)  # FP16 최적화
+base_trt_path = 'yolo11n.engine'
+
+print("커스텀 모델 → TensorRT 변환...")
+custom_model.export(format='engine', half=True, device=0)
+custom_trt_path = '/content/dataset/best.engine'
+
+# 3️⃣ TensorRT 모델 로드
+print("\n🔥 TensorRT 모델 로드 중...")
+base_trt_model = YOLO(base_trt_path)
+custom_trt_model = YOLO(custom_trt_path)
+
+print("✅ TensorRT 모델 로드 완료!")
+
+# 4️⃣ 영상 다운로드
+print("\n📥 YouTube 영상 다운로드 중...")
+!yt-dlp -f 'best[height<=720]' -o '/content/test_video.%(ext)s' 'https://www.youtube.com/watch?v=AxLmroTo3rQ'
+
+video_path = glob.glob('/content/test_video.*')[0]
+print(f"✅ 다운로드 완료: {video_path}")
+
+# 5️⃣ 성능 비교 함수
+def performance_comparison(video_path, frames_to_test=100):
+    """PyTorch vs TensorRT 성능 비교"""
+
+    print(f"\n⏱️ 성능 비교 (첫 {frames_to_test}프레임)")
+    print("-" * 50)
+
+    cap = cv2.VideoCapture(video_path)
+
+    # PyTorch 모델 성능 테스트
+    pytorch_times = []
+    for i in range(frames_to_test):
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        start_time = time.time()
+        _ = base_model(frame, verbose=False)
+        _ = custom_model(frame, verbose=False)
+        end_time = time.time()
+
+        pytorch_times.append(end_time - start_time)
+
+    # TensorRT 모델 성능 테스트
+    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # 처음으로 되돌리기
+    tensorrt_times = []
+    for i in range(frames_to_test):
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        start_time = time.time()
+        _ = base_trt_model(frame, verbose=False)
+        _ = custom_trt_model(frame, verbose=False)
+        end_time = time.time()
+
+        tensorrt_times.append(end_time - start_time)
+
+    cap.release()
+
+    # 결과 출력
+    pytorch_avg = np.mean(pytorch_times) * 1000  # ms로 변환
+    tensorrt_avg = np.mean(tensorrt_times) * 1000
+    speedup = pytorch_avg / tensorrt_avg
+
+    print(f"🐍 PyTorch 평균: {pytorch_avg:.2f}ms/frame ({1000/pytorch_avg:.1f} FPS)")
+    print(f"⚡ TensorRT 평균: {tensorrt_avg:.2f}ms/frame ({1000/tensorrt_avg:.1f} FPS)")
+    print(f"🚀 속도 향상: {speedup:.2f}x")
+
+    return speedup
+
+# 성능 비교 실행
+speedup_ratio = performance_comparison(video_path)
+
+# 6️⃣ TensorRT 최적화된 결합 추론
+def tensorrt_combined_inference(video_path, output_path='/content/tensorrt_result.mp4'):
+    """TensorRT 최적화된 결합 추론"""
+
+    cap = cv2.VideoCapture(video_path)
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    # 출력 영상 설정
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+
+    print(f"\n🎬 TensorRT 최적화 영상 처리 중... (총 {total_frames} 프레임)")
+
+    frame_count = 0
+    total_inference_time = 0
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # TensorRT 추론 (시간 측정)
+        start_time = time.time()
+
+        # 기본 TensorRT 모델 추론
+        base_results = base_trt_model(frame, verbose=False)
+
+        # 커스텀 TensorRT 모델 추론
+        custom_results = custom_trt_model(frame, verbose=False)
+
+        inference_time = time.time() - start_time
+        total_inference_time += inference_time
+
+        # 결과 시각화
+        annotated_frame = frame.copy()
+
+        # 기본 YOLO 결과 그리기 (파란색)
+        if base_results[0].boxes is not None:
+            for box in base_results[0].boxes:
+                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                conf = float(box.conf[0])
+                cls = int(box.cls[0])
+
+                if conf > 0.3:
+                    label = f"{base_trt_model.names[cls]} {conf:.2f}"
+                    cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                    cv2.putText(annotated_frame, label, (x1, y1-10),
+                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+        # 커스텀 YOLO 결과 그리기 (빨간색)
+        if custom_results[0].boxes is not None:
+            for box in custom_results[0].boxes:
+                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                conf = float(box.conf[0])
+                cls = int(box.cls[0])
+
+                if conf > 0.3:
+                    label = f"{custom_trt_model.names[cls]} {conf:.2f}"
+                    cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                    cv2.putText(annotated_frame, label, (x1, y1-10),
+                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+
+        # TensorRT 정보 표시
+        fps_text = f"TensorRT: {1/inference_time:.1f} FPS"
+        cv2.putText(annotated_frame, fps_text, (10, 30),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+        out.write(annotated_frame)
+        frame_count += 1
+
+        if frame_count % 50 == 0:
+            avg_fps = frame_count / total_inference_time
+            print(f"   처리 중... {frame_count}/{total_frames} ({frame_count/total_frames*100:.1f}%) - 평균 {avg_fps:.1f} FPS")
+
+    cap.release()
+    out.release()
+
+    avg_fps = frame_count / total_inference_time
+    print(f"✅ TensorRT 결과 영상 저장: {output_path}")
+    print(f"📊 평균 처리 속도: {avg_fps:.1f} FPS")
+
+    return avg_fps
+
+# 7️⃣ TensorRT 최적화된 추론 실행
+print("\n🔥 TensorRT 최적화된 결합 추론 실행...")
+tensorrt_fps = tensorrt_combined_inference(video_path, '/content/tensorrt_final_result.mp4')
+
+# 8️⃣ 기존 PyTorch 추론도 실행 (비교용)
+print("\n🐍 PyTorch 기존 추론 (비교용)...")
+def pytorch_combined_inference(video_path, output_path='/content/pytorch_result.mp4'):
+    cap = cv2.VideoCapture(video_path)
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+
+    frame_count = 0
+    start_time = time.time()
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        base_results = base_model(frame, verbose=False)
+        custom_results = custom_model(frame, verbose=False)
+
+        # 간단한 시각화 (속도 비교용)
+        annotated_frame = frame.copy()
+        cv2.putText(annotated_frame, "PyTorch", (10, 30),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+
+        out.write(annotated_frame)
+        frame_count += 1
+
+        if frame_count >= 100:  # 100프레임만 처리 (비교용)
+            break
+
+    cap.release()
+    out.release()
+
+    total_time = time.time() - start_time
+    pytorch_fps = frame_count / total_time
+    return pytorch_fps
+
+pytorch_fps = pytorch_combined_inference(video_path)
+
+# 9️⃣ 성능 평가 (커스텀 모델)
+print("\n📊 커스텀 모델 성능 평가:")
+metrics = custom_model.val(data='/content/dataset/dataset_fixed.yaml')  # custom_trt_model 대신 custom_model
+print(f"mAP50: {metrics.box.map50:.4f}")
+
+# 🔟 최종 결과 및 비교
+print("\n" + "="*60)
+print("🎯 최종 성능 비교 결과:")
+print(f"🐍 PyTorch: {pytorch_fps:.1f} FPS")
+print(f"⚡ TensorRT: {tensorrt_fps:.1f} FPS")
+print(f"🚀 전체 속도 향상: {tensorrt_fps/pytorch_fps:.2f}x")
+
+print(f"\n📊 모델 정확도 (mAP50): {metrics.box.map50:.4f}")
+
+print("\n🎬 최종 TensorRT 결과 영상:")
+Video('/content/tensorrt_final_result.mp4', width=800)
+
+print("\n🎉 TensorRT 최적화 완료!")
+print("🔵 파란색 박스: 기본 YOLO 객체들 (TensorRT 최적화)")
+print("🔴 빨간색 박스: 커스텀 객체들 (TensorRT 최적화)")
+print("💚 초록색 텍스트: 실시간 FPS 표시")
+
+print("\n💾 생성된 파일들:")
+print("- tensorrt_final_result.mp4: TensorRT 최적화된 최종 결과")
+print("- pytorch_result.mp4: PyTorch 비교용 결과")
+print("- yolo11n.engine: 기본 모델 TensorRT 엔진")
+print("- best.engine: 커스텀 모델 TensorRT 엔진")
