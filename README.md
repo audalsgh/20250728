@@ -51,3 +51,12 @@ Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하
   <img width="978" height="703" alt="image" src="https://github.com/user-attachments/assets/4373b72f-eee4-4e39-89a4-657d1266a6e9" />
 
 6. 밑에 있는 코드들은 yaml 파일을 코랩의 코드셀에서 건드려 오류를 해결하는 부분이지만, 내가 직접 yaml 파일을 더블클릭하여 수정했으므로 의미는 없다.
+
+## 3. PyTorch (YOLO의 기반) vs TensorRT
+TensorRT 위주로 정리.<br>
+- 모델을 훈련하여 만드는건 파이토치에서 한거고, 텐서는 "그 완성된 모델"을 빠르게 실행하는것.
+- 에포크가 무조건 필요
+- 실시간 추론 (cctv, 자율주행)에 많이 쓰임
+- 배포환경은 서버, 엣지
+- gpu 리소스 절약됨
+- 높은 처리량이 필요함
