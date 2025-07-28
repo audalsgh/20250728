@@ -47,7 +47,7 @@ Ultralytics YOLO는 PyTorch 모델이다. 기반이 파이토치라고 이해하
   -3990 프레임수 :	총 3990장의 영상 프레임을 처리했다는 의미. 영상 길이가 약 2분 = 프레임수 4000플마<br>
   -61.70초	: YOLO 모델이 전체 3990 프레임에 대해 추론하는 데 걸린 시간.<br>
   -FPS (Frame Per Second)	64.66 : (프레임수/처리시간)으로 구한 값, 초당 약 64.66장의 프레임을 YOLO가 처리했다는 뜻.<br>
-  <br>
+   
   -> YOLO 모델이 꽤 빠르다는 뜻! 일반적으로 GPU (특히 Tesla T4 같은 모델)에서 60 FPS 이상이면 실시간 성능급임.<br>
   <img width="978" height="703" alt="image" src="https://github.com/user-attachments/assets/4373b72f-eee4-4e39-89a4-657d1266a6e9" />
 
