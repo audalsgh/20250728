@@ -63,9 +63,22 @@ TensorRT 위주로 정리.<br>
 - gpu 리소스 절약됨
 - 높은 처리량과 실시간성이 중요할때 쓰인다.
 
+교수님의 정리<br>
+:mag: TensorRT의 역할
+:x: TensorRT가 하지 않는 것
+:no_entry_sign: 딥러닝 훈련 (Training) 안함. ADAM 등을 이용한 optimizer가 없음
+:no_entry_sign: 가중치 학습
+:no_entry_sign: 역전파 (Backpropagation)
+:no_entry_sign: 모델 개발
+:white_check_mark: TensorRT가 하는 것
+:zap: 추론만 (Inference Only)
+:wrench: 모델 최적화
+:package: 엔진 변환
+:rocket: 실행 가속
+
 ### YOLO를 사용하는 기존코드를 챗GPT를 통해 TensorRT 모델 .engine파일로 변환해서 테스트해보기.
 **- Colab은 tensorrt 설치 시 GPU 드라이버와 충돌하거나, 설치 시간이 오래 걸려 멈추는 경우 존재**<br>
-- 여러번 실행해서 TensorRT 변환을 위한 tensorrt 패키지 설치가 완료될때까지 시도해야함.<br>
+- 여러번 실행해서 TensorRT 변환을 위한 "tensorrt 패키지" 설치가 완료될때까지 시도해야함.<br>
 - 나의 코드는 YOLOv11까지 테스트한 교수님것과 달리, 커스텀된 YOLO모델 (best.pt)에 대한 테스트만 하고있다.<br>
 <img width="688" height="476" alt="image" src="https://github.com/user-attachments/assets/4ec847e4-40c8-4458-b685-c028e5380cac" /><br>
 
